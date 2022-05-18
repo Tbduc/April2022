@@ -6,7 +6,7 @@ def userSum(a, b):
     return sum
 
 print(userSum(10, 10))
-
+print(4%16)
 for i in range(5):
     for j in range(5):
         sum = userSum(i, j)

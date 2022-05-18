@@ -1,72 +1,71 @@
 from keyword import iskeyword
 import random
-from sys import stdout
 
 def is_letter(userInput):
     isLetter = userInput.isalpha()
     if isLetter:
         return True
-    else:
-        return False
+    return False
 
-def is_valid_level(poziom):
-    if poziom == "łatwy" or poziom == "średni" or poziom == "trudny":
+def is_valid_level(difficulty):
+    if difficulty == "łatwy" or difficulty == "średni" or difficulty == "trudny":
         return True
     return False
 
 def ask_for_letter(force_valid_input):
     while True:
-        litera = input("Podaj literę:")
-        czy_litera = is_letter(litera)
-        if czy_litera is False:
+        letter = input("Podaj literę:")
+        isLetter = is_letter(letter)
+        if isLetter is False:
             if not force_valid_input:
                 return None
             print("Nie właściwy znak")
         else:
-            return litera
-        pass
+            return letter
     
-def check_letter(litera):
-    malyZnak = litera.lower()
+def check_letter(letter):
+    small_letter = letter.lower()
     while True:
-        if malyZnak == "quit":
+        if small_letter == "quit":
             quit()
-        if len(malyZnak) != 1:
-            malyZnak = input("Wybierz tylko 1 literę:")
+        if len(small_letter) > 1:
+            small_letter = input("Wybierz tylko 1 literę:")
         else:
-            return malyZnak
+            return small_letter
 
-def check_tried_letters(litera, tried_letters):
-    if len(tried_letters) == 0 or litera not in tried_letters:
-        tried_letters.append(litera)
+def check_tried_letters(letter, tried_letters):
+    if len(tried_letters) == 0 or letter not in tried_letters:
+        tried_letters.append(letter)
     else:
-        while litera in tried_letters and len(tried_letters) >= 1:
-            litera = input("Litera została już wybrana, wybierz inną:")
+        while letter in tried_letters and len(tried_letters) >= 1:
+            letter = input("Litera została już wybrana, wybierz inną:")
+        tried_letters.append(letter)
     return tried_letters
             
-def current_word(slowo, tried_letters, checking):
-    if slowo[0] == checking.upper():
-        tried_letters.append(checking.upper())
-    current_word = "".join(x if x in tried_letters else '_' for x in slowo)
-    return current_word
+def current_word(country, tried_letters, char, current):
+    for i in range(0,len(country)):
+        if country[i] == char.upper():
+            tried_letters.append(char.upper())
+        if country[i] == char:
+            current[i] = char
+        elif country[i] == char.upper():
+            current[i] = char.upper()
+        """elif country[i] == tried_letters[-1]:
+            current[i] = tried_letters[-1]"""
+    return "".join(current).rstrip()
 
-def life_decreases(lives):
-    lives -= 1
-    return lives
-
-def display_hangman(count, lives, image):
+def display_hangman(count, image):
     print(image[0 + count])
-    print("Nie zgadłeś, masz obecnie: %d żyć" % lives)
 
-def set_lives(zycie, level):
+def set_lives(lives, level):
     if level == "łatwy":
-        zycie = 8
+        lives = 8
     elif level == "średni":
-        zycie = 6
+        lives = 6
     elif level == "trudny":
-        zycie = 4
-    print("Masz obecnie %d żyć: " % zycie)
-    return zycie
+        lives = 4
+    print("Masz obecnie %d żyć: " % lives)
+    return lives
 
 def set_difficulty(level, image):
     if level == "średni":
@@ -75,36 +74,43 @@ def set_difficulty(level, image):
         image = image[4:]
     return image
 
-def hidden_word(slowo):
-    print(slowo)
-    zagadka = "_"*len(slowo)
-    print(zagadka)
+def hidden_word(country):
+    #print(slowo)
+    if " " in country:
+        hidden = ""
+        hidden_words = country.split(" ")
+        for char in hidden_words:
+            hidden += "_"*len(char) + " "
+    else:
+        hidden = "_"*len(country)
+    print(hidden + "\n")
+    return hidden
 
 def ask_for_difficulty(force_valid_input):
     while True:
-        poziom = input("Wybierz poziom: łatwy, średni, trudny:")
-        isValid = is_valid_level(poziom)
+        difficulty = input("Wybierz poziom: łatwy, średni, trudny:")
+        isValid = is_valid_level(difficulty)
         if isValid is False:
             if not force_valid_input:
                 return None
-            print("Wpisałeś niezrozumiałę komendę")
+            print("Wpisałeś niezrozumiałą komendę")
         else:
-            return poziom
+            return difficulty
 
 def read_from_file():
-    lista = []
+    list = []
 
     with open('countries.txt') as f:
         for line in f:
-            lista.append(line.split(" | ", 1)[0])
-    return lista
+            list.append(line.split(" | ", 1)[0])
+    return list
 
 def generate_guess():
     countries = read_from_file()
     return random.choice(countries)
 
-def status(result, lives):
-    if result.isalpha():
+def status(result, lives, country):
+    if result == country:
         return False
     elif lives == 0:
         print("Przegrałeś")
@@ -138,24 +144,28 @@ def hangman():
     level = ask_for_difficulty(True)
     lives = set_lives(0, level)
     art = set_difficulty(level, HANGMANPICS)
-    slowo = generate_guess()
-    hidden_word(slowo)
-    litera = ask_for_letter(True)
-    char = check_letter(litera)
+    country = generate_guess()
+    print("Zgadnij, który to kraj w języku angielskim")
+    hidden = hidden_word(country)
+    current = list(hidden)
+    letter = ask_for_letter(True)
+    char = check_letter(letter)
     tried_letters = check_tried_letters(char, already_tried_letters)
-    check_status = status(result, lives)
+    check_status = status(result, lives, country)
 
     while check_status != False:
-        if char.lower() not in slowo.lower():
-            lives = lives - 1
-            display_hangman(count, lives, art)
-            count += 1     
-        result = current_word(slowo, tried_letters, char)
-        print(result)
-        check_status = status(result, lives)
+        char = tried_letters[-1]
+        if char.lower() not in country.lower():
+            lives -= 1
+            display_hangman(count, art)
+            count += 1
+            print("Nie zgadłeś, masz obecnie: %d żyć" % lives)
+        result = current_word(country, tried_letters, char, current)
+        print(result + "\n")
+        check_status = status(result, lives, country)
         if check_status != False:
-            litera = ask_for_letter(True)
-            char = check_letter(litera)
+            letter = ask_for_letter(True)
+            char = check_letter(letter)
             tried_letters = check_tried_letters(char, already_tried_letters)
 
     if check_status == False and lives > 0:

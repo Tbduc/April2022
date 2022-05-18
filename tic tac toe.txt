@@ -1,0 +1,33 @@
+funkcja get_empty_board():
+- ma zwrócić listę, która zawiera 3 listy w środku, a każda z tych list zawiera 3 elementy w postaci kropki. Zmiana jednej listy w środku nie zmienia wartości pozostałych list.
+
+funkcja get_human_coordinates():
+- pyta o dane wejściowe od użytkownika, a potem przypisuje koordynaty wybranego ruchu na planszę
+- akceptuje koordynaty jako literę oraz numer np. A2 i C1
+- funkcja ma zwrócić tuple z dwoma liczbami (row, col)
+- koordynaty zaczynają od liczby 0
+- liczby są przypisane do odpowiedniej pozycji na planszy (pozycja ma być równa kropką)
+- musi być napisana funkcja sprawdzająca dane wejściowe, która będzie powiadamiać gracza o nieprawidłowym wprowadzeniu koordynatów (np. Z3 albo aaffs) albo wybraniu już istniejącej pozycji
+
+funkcja wyświetlająca wybór pozycji na planszy:
+- jeśli gracz wybierze odpowiedni koordynat, wyświetla się jeden z znaków na planszy (X albo O)
+- czyli trzeba zrobić warunek sprawdzający koordynat i do którego gracza należy obecna tura. Na końcu funkcja zwraca znak X albo O
+
+funkcja get_winning_player():
+- funkcja ma zwrócić X albo O jeśli w jednej linii pionowej, poziomej lub na ukos znajdzie jeden ze znaków
+- trzeba będzie stworzyć pustą tablicę, a potem warunek logiczny sprawdzający czy tablica zawiera odpowiednie koordynaty aby wygrana była prawdziwa np. [A1,A2,A3]
+
+funkcja display_board(board):
+- ma za zadanie wyświetlić planszę z koordynatami.Gracze będą podzieleni na X i O. Forma planszy:
+   1   2   3
+A  . | . | .
+  ---+---+---
+B  . | . | .
+  ---+---+---
+C  . | . | .
+
+funkcja print_result():
+- trzeba napisać 3 warunki w tej funkcji
+- jeśli gracz X wygrał, to ma wyprintować "X has won!"
+- jeśli gracz O wygrał, to wyprintuje "0 has won!"
+- jeśli nikt nie wygrał to wyprintuje "It's a tie!"
