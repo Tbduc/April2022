@@ -94,7 +94,7 @@ def get_winning_player(board, current_player, players, coordinates, already_chos
     dia = new_board[0][0]==new_board[1][1]==new_board[2][2]!= '.' or new_board[2][0]==new_board[1][1]==new_board[0][2]!= '.' 
     if hori or verti or dia:
         display_board(board)
-        print("%s wins" % current_player)
+        print("%s has won!" % current_player)
         winner = current_player
     return winner
  
@@ -120,7 +120,7 @@ def is_board_full(board):
             full = True
     if full:
         display_board(board)
-        print("Tie")
+        print("It's a tie!")
     return full
  
  
@@ -150,7 +150,7 @@ def main():
                 current_player = "O"
             else:
                 current_player = "X"
-                
+                   
         winning_player = get_winning_player(board, current_player, players, coordinates, already_chosen, round)
         its_a_tie = is_board_full(board)
         if winning_player == current_player:

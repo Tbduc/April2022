@@ -1,60 +1,210 @@
-board = [[' ',' ',' '],[' ',' ',' '],[' ',' ',' ']]
+import random
 
-winner = None
-full = False
-moves = []
-game = True 
+def get_menu_option():
+    print("Hello, welcome to game Tic Tac Toe. Have fun! ")
+    option = input("Player vs Player(1), AI vs Player(2) ")
 
-def display():
-    for i in board:
-        print("-"*7)
-        for j in i:
-            print("|"+j, end= "")
-        print("|")
-    print("-"*7)
+    if option == "1":
+        print("You've chosen Player vs Player")
+    else:
+        print("You've chosen AI vs Player")
+    return option
 
-def win(player):
-    global winner
-    b = board
-    hori = b[0][0]==b[0][1]==b[0][2]!= ' ' or b[1][0]==b[1][1]==b[1][2]!=' ' or b[2][0]==b[2][1]==b[2][2]!= ' '
-    verti = b[0][0]==b[1][0]==b[2][0]!= ' ' or b[0][1]==b[1][1]==b[2][1]!= ' ' or b[0][2]==b[1][2]==b[2][2]!= ' '
-    dia = b[0][0]==b[1][1]==b[2][2]!= ' ' or b[2][0]==b[1][1]==b[0][2]!= ' ' 
+
+
+
+ 
+def get_empty_board():
+    start_board = []
+ 
+    for i in range(3):
+        row = []
+        for j in range(3):
+            row.append('.')
+        start_board.append(row)
+    return start_board
+ 
+def is_correct_letter(userInput):
+    possible_letters = ["A", "B", "C"]
+    entered_letter = userInput[0].upper()
+    if entered_letter not in possible_letters:
+        return False
+    return True
+ 
+def is_number(userInput):
+    value = int(userInput)
+    possible_numbers = [1, 2, 3]
+    if value not in possible_numbers:
+        return False
+    return True
+ 
+def check_coordinates(already_chosen, round, is_ai):
+    error_msg = "Enter correct coordinates."
+    while True:
+        if round % 2 == 0 or is_ai:
+            user_input = input('Player 1 please enter coordinates: ')
+        else:
+            user_input = input('Player 2 please enter coordinates: ')
+        isLetter = is_correct_letter(user_input[0])
+        isNumber = is_number(user_input[1])
+        try:
+            coordinate = (user_input[0].upper(), int(user_input[1]))
+            if coordinate[0].strip().lstrip('-').replace('.', '', 1).isdigit() or len(user_input) > 2:
+                print(error_msg)
+                continue
+            elif isLetter is False or isNumber is False:
+                print(error_msg)
+                continue
+        except:
+            print(error_msg)
+            continue
+        if coordinate not in already_chosen:
+            already_chosen.append(coordinate)
+        else:
+            print("This coordinate is already occupied!")
+            continue
+        return coordinate
+ 
+def get_human_coordinates(already_chosen, coordinates, round, is_ai):
+    is_ai = False
+    coordinate = check_coordinates(already_chosen, round, is_ai)     
+    for row in coordinates:
+        for element in row:
+            if element == coordinate:
+                return element
+ 
+def create_new_board(board, move, current_player, coordinates):
+    for row in range(len(coordinates)):
+        for index in range(len(board)):
+            if current_player == "X":
+                if move == coordinates[row][index]:
+                    board[row][index] = "X"
+            else:
+                if move == coordinates[row][index]:
+                    board[row][index] = "O"
+    return board
+ 
+def player_input():
+    player1 = input("Please choose 'X' or 'O' ")
+    while True:
+        if player1.upper() == 'X':
+            player2='O'
+            print("Your choice is:  " + player1.upper() + ". Player 2 is " + player2.upper())
+        elif player1.upper() == 'O':
+            player2='X'
+            print("Your choice is: " + player1.upper() + ". Player 2 is " + player2.upper())
+        else:
+            player1 = input("Please choice 'X' or 'O' ")
+            continue
+        return player1.upper(),player2.upper()
+ 
+ 
+def get_winning_player(board, current_player, players, coordinates, already_chosen, round, is_ai):
+    winner = None
+    if round % 2 == 0:
+        is_ai = False
+        move = get_human_coordinates(already_chosen, coordinates, round, is_ai)
+    else:
+        move = get_random_ai_coordinates(board, players, coordinates, current_player, round, already_chosen)
+    new_board = create_new_board(board, move, current_player, coordinates)
+    hori = new_board[0][0]==new_board[0][1]==new_board[0][2]!= '.' or new_board[1][0]==new_board[1][1]==new_board[1][2]!='.' or new_board[2][0]==new_board[2][1]==new_board[2][2]!= '.'
+    verti = new_board[0][0]==new_board[1][0]==new_board[2][0]!= '.' or new_board[0][1]==new_board[1][1]==new_board[2][1]!= '.' or new_board[0][2]==new_board[1][2]==new_board[2][2]!= '.'
+    dia = new_board[0][0]==new_board[1][1]==new_board[2][2]!= '.' or new_board[2][0]==new_board[1][1]==new_board[0][2]!= '.' 
     if hori or verti or dia:
-        winner = player
+        display_board(board)
+        print("%s has won!" % current_player)
+        winner = current_player
+    return winner
+ 
+def display_board(board):
+    row_list = ("A", "B", "C")
+    index = 0
+    for row in board:
+        if index < 1:
+            print('   ' + "1" + ' | ' + "2 " + '| ' + "3")
+        print(row_list[index] + ' ' + ' ' + row[0] + ' | ' + row[1] + ' | ' + row[2])
+        index += 1
+        print('  ---+'+('---'*(len(board)-2))+'+---')
+ 
+  
+def is_board_full(board):
+    full = False
+ 
     for i in board:
-        if " " in i:
+        if "." in i:
             full = False
             break
         else:
             full = True
-    if full and not winner:
-         winner = 'draw'
+    if full:
+        display_board(board)
+        print("It's a tie!")
+    return full
 
-   
-player = 'X'
-while game:
-    move = input(f"Player ({player}) (Eg:12) : ")
-    if move not in moves:
-        moves.append(move)
-    else:
-        print("Already Occupied!")
-        continue
-    try:
-        x,y = int(move[0]), int(move[1])
-    except:
-        print("Enter the Coordinates properly")
-        continue
-    board[2-y][x] = f"{player}"
+def get_random_ai_coordinates(board, players, coordinates, current_player, round, already_chosen):
 
-    display()
-    win(player)
-    if winner == player:
-        print(f"{player} wins!")
-        game = False
-    elif winner == "draw":
-        print("It's a Tie")
-        game = False
-    if player=='X':
-        player = 'O'
+    is_ai = True
+    
+    if current_player == players[0]:
+        if round % 2 == 0:
+            coordinate = check_coordinates(already_chosen, round, is_ai)
+            current_player = players[0]
+            return coordinate
+        else:
+            current_player = players[1]
     else:
-        player = 'X'
+        if round % 2 == 0:
+            coordinate = check_coordinates(already_chosen, round, is_ai)
+            current_player = players[0]
+            return coordinate
+        else:
+            current_player = players[1]
+            
+    for i in range(3):
+        if current_player not in board[i]:
+            for row in range(3):
+                element = random.choice(coordinates) 
+                for index in range(3):
+                    if board[row][index] != element[index] and board[row][index] == "." and element[index] not in already_chosen:
+                        already_chosen.append(element[index])
+                        return element[index]
+
+        
+
+def main():
+    player1 = ''
+    player2 = ''
+    already_chosen = []
+    round = 0
+    coordinates = [[("A", 1),("A", 2),("A", 3)],[("B", 1),("B", 2),("B", 3)],[("C", 1),("C", 2),("C", 3)]]
+    
+    game_mode = get_menu_option()
+    board = get_empty_board()
+    players = player_input()
+    
+    is_game_running = True
+    while is_game_running:
+        display_board(board)
+        if game_mode == "2" and round % 2 == 0:
+            is_ai = False
+        if players[0] == "X":
+            if round % 2 == 0:
+                current_player = "X"
+            else:
+                current_player = "O"
+        else:
+            if round % 2 == 0:
+                current_player = "O"
+            else:
+                current_player = "X"
+               
+        winning_player = get_winning_player(board, current_player, players, coordinates, already_chosen, round, is_ai)
+        its_a_tie = is_board_full(board)
+        if winning_player == current_player:
+            is_game_running = False
+        elif its_a_tie:
+            is_game_running = False
+        round += 1
+ 
+if __name__ == '__main__':
+    main()
