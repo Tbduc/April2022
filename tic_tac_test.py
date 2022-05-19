@@ -32,7 +32,10 @@ def is_correct_letter(userInput):
     return True
  
 def is_number(userInput):
-    value = int(userInput)
+    try:
+        value = int(userInput)
+    except ValueError:
+        return False
     possible_numbers = [1, 2, 3]
     if value not in possible_numbers:
         return False
@@ -45,17 +48,14 @@ def check_coordinates(already_chosen, round, is_ai):
             user_input = input('Player 1 please enter coordinates: ')
         else:
             user_input = input('Player 2 please enter coordinates: ')
-        if len(user_input) < 2:
+        if len(user_input) != 2:
             print(error_msg)
             continue
         isLetter = is_correct_letter(user_input[0])
         isNumber = is_number(user_input[1])
         try:
             coordinate = (user_input[0].upper(), int(user_input[1]))
-            if coordinate[0].strip().lstrip('-').replace('.', '', 1).isdigit() or len(user_input) > 2:
-                print(error_msg)
-                continue
-            elif isLetter is False or isNumber is False:
+            if isLetter is False or isNumber is False:
                 print(error_msg)
                 continue
         except:
@@ -102,10 +102,9 @@ def player_input():
         return player1.upper(),player2.upper()
  
  
-def get_winning_player(board, current_player, players, coordinates, already_chosen, round, is_ai):
+def get_winning_player(board, current_player, players, coordinates, already_chosen, round, is_ai, game_mode):
     winner = None
-    if round % 2 == 0:
-        is_ai = False
+    if round % 2 == 0 or game_mode == "1":
         move = get_human_coordinates(already_chosen, coordinates, round, is_ai)
     else:
         move = get_random_ai_coordinates(board, players, coordinates, current_player, round, already_chosen)
@@ -187,7 +186,7 @@ def main():
     already_chosen = []
     round = 0
     coordinates = [[("A", 1),("A", 2),("A", 3)],[("B", 1),("B", 2),("B", 3)],[("C", 1),("C", 2),("C", 3)]]
-    
+    is_ai = False
     game_mode = get_menu_option()
     board = get_empty_board()
     players = player_input()
@@ -195,7 +194,7 @@ def main():
     is_game_running = True
     while is_game_running:
         display_board(board)
-        if game_mode == "2" and round % 2 == 0:
+        if game_mode == "1" or round % 2 == 0:
             is_ai = False
         if players[0] == "X":
             if round % 2 == 0:
@@ -208,7 +207,7 @@ def main():
             else:
                 current_player = "X"
                
-        winning_player = get_winning_player(board, current_player, players, coordinates, already_chosen, round, is_ai)
+        winning_player = get_winning_player(board, current_player, players, coordinates, already_chosen, round, is_ai, game_mode)
         its_a_tie = is_board_full(board)
         if winning_player == current_player:
             is_game_running = False
