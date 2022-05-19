@@ -1,5 +1,3 @@
-from calendar import c
-
 def get_menu_option():
     print("Hello, welcome to game Tic Tac Toe. Have fun! ")
 
@@ -74,7 +72,7 @@ def create_new_board(board, move, current_player, player, coordinates, already_c
         for index in range(len(board)):
             if move == coordinates[row][index] and len(already_chosen) > 1:
                 board[row][index] = coordinates[row][index]
-            elif coordinates[row][index] in already_chosen:
+            elif coordinates[row][index] in already_chosen and type(board[row][index]) != str:
                 board[row][index] = coordinates[row][index]
             if current_player == "X":
                 if player[0] == "X" and move == coordinates[row][index]:
@@ -120,25 +118,25 @@ def player_input():
  
         else:
             player1 = input("Please choice 'X' or 'O' ")
+            continue
         return player1.upper(),player2.upper()
  
  
 def get_winning_player(board, current_player, players, coordinates, already_chosen):
+    winner = None
     move = get_human_coordinates(already_chosen, coordinates, current_player)
     new_board = create_new_board(board, move, current_player, players, coordinates, already_chosen)
-    #display_board(new_board)
-    full = is_board_full(new_board)
     hori = new_board[0][0]==new_board[0][1]==new_board[0][2]!= '.' or new_board[1][0]==new_board[1][1]==new_board[1][2]!='.' or new_board[2][0]==new_board[2][1]==new_board[2][2]!= '.'
     verti = new_board[0][0]==new_board[1][0]==new_board[2][0]!= '.' or new_board[0][1]==new_board[1][1]==new_board[2][1]!= '.' or new_board[0][2]==new_board[1][2]==new_board[2][2]!= '.'
     dia = new_board[0][0]==new_board[1][1]==new_board[2][2]!= '.' or new_board[2][0]==new_board[1][1]==new_board[0][2]!= '.' 
     if hori or verti or dia:
-        print("Player {current_player} wins")
-    if full:
-        print("Player {current_player} loses")
+        display_board(board)
+        print("%s wins" % current_player)
+        winner = current_player
+    return winner
  
 def display_board(board):
  
-    rownumb = 0
     row_list = ("A", "B", "C")
     index = 0
     for row in board:
@@ -148,8 +146,7 @@ def display_board(board):
         print(row_list[index] + ' ' + ' ' + row[0] + ' | ' + row[1] + ' | ' + row[2])
         index += 1
  
-        if rownumb == 0:
-            print('  ---+'+('---'*(len(board)-2))+'+---')
+        print('  ---+'+('---'*(len(board)-2))+'+---')
  
   
 def is_board_full(board):
@@ -162,7 +159,8 @@ def is_board_full(board):
         else:
             full = True
     if full:
-         print("Tie")
+        display_board(board)
+        print("Tie")
     return full
  
  
@@ -171,6 +169,7 @@ def main():
     player1 = ''
     player2 = ''
     already_chosen = []
+    round = 0
     coordinates = [[("A", 1),("A", 2),("A", 3)],[("B", 1),("B", 2),("B", 3)],[("C", 1),("C", 2),("C", 3)]]
     
     game_mode = get_menu_option()
@@ -180,7 +179,10 @@ def main():
     is_game_running = True
     while is_game_running:
         display_board(board)
-        current_player = "X"
+        if players[0] == "X" and round % 2 == 0:
+            current_player = "X"
+        else:
+            current_player = "O"
         ### TO DO ###
         # in each new iteration of the while loop the program should 
         # alternate the value of `current_player` from `X` to `O`
@@ -198,10 +200,11 @@ def main():
         # OR continue the while loop
         winning_player = get_winning_player(board, current_player, players, coordinates, already_chosen)
         its_a_tie = is_board_full(board)
-        if  current_player =='X':
-            current_player = "O"
-        else:
-            current_player ='X'
+        if winning_player == current_player:
+            is_game_running = False
+        elif its_a_tie:
+            is_game_running = False
+        round += 1
 
 if __name__ == '__main__':
     main()
