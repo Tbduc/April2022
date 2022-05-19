@@ -45,6 +45,9 @@ def check_coordinates(already_chosen, round, is_ai):
             user_input = input('Player 1 please enter coordinates: ')
         else:
             user_input = input('Player 2 please enter coordinates: ')
+        if len(user_input) < 2:
+            print(error_msg)
+            continue
         isLetter = is_correct_letter(user_input[0])
         isNumber = is_number(user_input[1])
         try:
@@ -160,14 +163,21 @@ def get_random_ai_coordinates(board, players, coordinates, current_player, round
         else:
             current_player = players[1]
             
-    for i in range(3):
-        if current_player not in board[i]:
-            for row in range(3):
-                element = random.choice(coordinates) 
-                for index in range(3):
-                    if board[row][index] != element[index] and board[row][index] == "." and element[index] not in already_chosen:
-                        already_chosen.append(element[index])
-                        return element[index]
+        for row in range(3):
+            element = random.choice(coordinates) 
+            for index in range(3):
+                if board[row][index] != element[index] and board[row][index] == "." and element[index] not in already_chosen:
+                    already_chosen.append(element[index])
+                    return element[index]
+                else:
+                    while True:
+                        index = random.choice(range(3))
+                        if element[index] not in already_chosen:
+                            already_chosen.append(element[index])
+                            return element[index]
+                        else:
+                            element = random.choice(coordinates) 
+                            continue
 
         
 
