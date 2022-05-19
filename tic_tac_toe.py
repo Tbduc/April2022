@@ -25,10 +25,10 @@ def is_number(userInput):
         return False
     return True
 
-def check_coordinates(already_chosen, current_player):
+def check_coordinates(already_chosen, round):
     error_msg = "Enter correct coordinates."
     while True:
-        if current_player == "X":
+        if round % 2 == 0:
             user_input = input('Player 1 please enter coordinates: ')
         else:
             user_input = input('Player 2 please enter coordinates: ')
@@ -52,29 +52,21 @@ def check_coordinates(already_chosen, current_player):
             continue
         return coordinate
  
-def get_human_coordinates(already_chosen, coordinates, current_player):
-    coordinate = check_coordinates(already_chosen, current_player)     
+def get_human_coordinates(already_chosen, coordinates, round):
+    coordinate = check_coordinates(already_chosen, round)     
     for row in coordinates:
         for element in row:
             if element == coordinate:
                 return element
  
-def create_new_board(board, move, current_player, player, coordinates, already_chosen):
+def create_new_board(board, move, current_player, coordinates):
     for row in range(len(coordinates)):
         for index in range(len(board)):
-            if move == coordinates[row][index] and len(already_chosen) > 1:
-                board[row][index] = coordinates[row][index]
-            elif coordinates[row][index] in already_chosen and type(board[row][index]) != str:
-                board[row][index] = coordinates[row][index]
             if current_player == "X":
-                if player[0] == "X" and move == coordinates[row][index]:
+                if move == coordinates[row][index]:
                     board[row][index] = "X"
-                elif player[0] == "O" and move == coordinates[row][index]:
-                    board[row][index] = "O"
             else:
-                if player[1] == "X" and move == coordinates[row][index]:
-                    board[row][index] = "X"
-                elif player[1] == "O" and move == coordinates[row][index]:
+                if move == coordinates[row][index]:
                     board[row][index] = "O"
     return board
 
@@ -84,21 +76,19 @@ def player_input():
         if player1.upper() == 'X':
             player2='O'
             print("Your choice is:  " + player1.upper() + ". Player 2 is " + player2.upper())
- 
         elif player1.upper() == 'O':
             player2='X'
             print("Your choice is: " + player1.upper() + ". Player 2 is " + player2.upper())
- 
         else:
             player1 = input("Please choice 'X' or 'O' ")
             continue
         return player1.upper(),player2.upper()
  
  
-def get_winning_player(board, current_player, players, coordinates, already_chosen):
+def get_winning_player(board, current_player, players, coordinates, already_chosen, round):
     winner = None
-    move = get_human_coordinates(already_chosen, coordinates, current_player)
-    new_board = create_new_board(board, move, current_player, players, coordinates, already_chosen)
+    move = get_human_coordinates(already_chosen, coordinates, round)
+    new_board = create_new_board(board, move, current_player, coordinates)
     hori = new_board[0][0]==new_board[0][1]==new_board[0][2]!= '.' or new_board[1][0]==new_board[1][1]==new_board[1][2]!='.' or new_board[2][0]==new_board[2][1]==new_board[2][2]!= '.'
     verti = new_board[0][0]==new_board[1][0]==new_board[2][0]!= '.' or new_board[0][1]==new_board[1][1]==new_board[2][1]!= '.' or new_board[0][2]==new_board[1][2]==new_board[2][2]!= '.'
     dia = new_board[0][0]==new_board[1][1]==new_board[2][2]!= '.' or new_board[2][0]==new_board[1][1]==new_board[0][2]!= '.' 
@@ -109,16 +99,13 @@ def get_winning_player(board, current_player, players, coordinates, already_chos
     return winner
  
 def display_board(board):
- 
     row_list = ("A", "B", "C")
     index = 0
     for row in board:
- 
         if index < 1:
             print('   ' + "1" + ' | ' + "2 " + '| ' + "3")
         print(row_list[index] + ' ' + ' ' + row[0] + ' | ' + row[1] + ' | ' + row[2])
         index += 1
- 
         print('  ---+'+('---'*(len(board)-2))+'+---')
  
   
@@ -153,7 +140,7 @@ def main():
     while is_game_running:
         display_board(board)
         
-        if players[round % 2] == "X":
+        if players[0] == "X":
             if round % 2 == 0:
                 current_player = "X"
             else:
@@ -164,7 +151,7 @@ def main():
             else:
                 current_player = "X"
                 
-        winning_player = get_winning_player(board, current_player, players, coordinates, already_chosen)
+        winning_player = get_winning_player(board, current_player, players, coordinates, already_chosen, round)
         its_a_tie = is_board_full(board)
         if winning_player == current_player:
             is_game_running = False
