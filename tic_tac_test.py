@@ -2,12 +2,12 @@ import random
 
 def get_menu_option():
     print("Hello, welcome to game Tic Tac Toe. Have fun! ")
-    option = input("Player vs Player(1), AI vs Player(2) ")
+    option = input("Player vs Player(1)\nPlayer vs AI (2)\n")
 
     if option == "1":
         print("You've chosen Player vs Player")
     else:
-        print("You've chosen AI vs Player")
+        print("You've chosen Player vs AI")
     return option
 
 
@@ -129,7 +129,7 @@ def display_board(board):
         print('  ---+'+('---'*(len(board)-2))+'+---')
  
   
-def is_board_full(board):
+def is_board_full(board, winning_player, current_player):
     full = False
  
     for i in board:
@@ -138,7 +138,7 @@ def is_board_full(board):
             break
         else:
             full = True
-    if full:
+    if full and winning_player != current_player:
         display_board(board)
         print("It's a tie!")
     return full
@@ -161,7 +161,62 @@ def get_random_ai_coordinates(board, players, coordinates, current_player, round
             return coordinate
         else:
             current_player = players[1]
-            
+    # Here is our algorithm for our Tic Tac Toe AI:
+
+    # First, check if we can win in the next move
+
+    for i in range(1, 10):
+
+        copy = getBoardCopy(board)
+
+        if isSpaceFree(copy, i):
+
+            makeMove(copy, computerLetter, i)
+
+            if isWinner(copy, computerLetter):
+
+               return i
+
+
+
+     # Check if the player could win on their next move, and block them.
+
+        for i in range(1, 10):
+
+            copy = getBoardCopy(board)
+
+            if isSpaceFree(copy, i):
+
+                makeMove(copy, playerLetter, i)
+
+            if isWinner(copy, playerLetter):
+
+                return i
+
+
+
+        # Try to take one of the corners, if they are free.
+
+        move = chooseRandomMoveFromList(board, [1, 3, 7, 9])
+
+        if move != None:
+
+            return move
+
+
+
+        # Try to take the center, if it is free.
+
+        if isSpaceFree(board, 5):
+
+            return 5
+
+
+
+        # Move on one of the sides.
+
+        return chooseRandomMoveFromList(board, [2, 4, 6, 8])
+
         for row in range(3):
             element = random.choice(coordinates) 
             for index in range(3):
@@ -181,8 +236,6 @@ def get_random_ai_coordinates(board, players, coordinates, current_player, round
         
 
 def main():
-    player1 = ''
-    player2 = ''
     already_chosen = []
     round = 0
     coordinates = [[("A", 1),("A", 2),("A", 3)],[("B", 1),("B", 2),("B", 3)],[("C", 1),("C", 2),("C", 3)]]
@@ -208,7 +261,7 @@ def main():
                 current_player = "X"
                
         winning_player = get_winning_player(board, current_player, players, coordinates, already_chosen, round, is_ai, game_mode)
-        its_a_tie = is_board_full(board)
+        its_a_tie = is_board_full(board, winning_player, current_player)
         if winning_player == current_player:
             is_game_running = False
         elif its_a_tie:
