@@ -31,3 +31,37 @@ funkcja print_result():
 - jeśli gracz X wygrał, to ma wyprintować "X has won!"
 - jeśli gracz O wygrał, to wyprintuje "0 has won!"
 - jeśli nikt nie wygrał to wyprintuje "It's a tie!"
+
+
+        """
+        for row in range(3):
+            for index in range(3):
+                #if board[row][index] != element[index] and board[row][index] == "." and element[index] not in already_chosen:
+                   # already_chosen.append(element[index])
+                    #return element[index]
+                if board[row][index] == "." and is_winner(board, current_player):
+                    already_chosen.append(coordinates[row][index])
+                    return coordinates[row][index]
+                if current_player == players[0]:
+                    if is_winner(copied_board, current_player):
+                        already_chosen.append(coordinates[row][index])
+                        return coordinates[row][index]
+                if current_player == players[1]:
+                    if is_winner(copied_board, current_player):
+                        already_chosen.append(coordinates[row][index])
+                        return coordinates[row][index]
+                """
+                """ elif coordinates[row][index] not in possibleMoves and board[row][index] == "." and coordinates[row][index] not in already_chosen:
+                    possibleMoves.append(coordinates[row][index])
+            if len(possibleMoves) != 0 and coordinates[row][index] not in already_chosen:
+                return random.choice(possibleMoves)
+            
+                else:
+                    while True:
+                        index = random.choice(range(3))
+                        if element[index] not in already_chosen:
+                            already_chosen.append(element[index])
+                            return element[index]
+                        else:
+                            element = random.choice(coordinates) 
+                            continue"""

@@ -3,20 +3,47 @@ import os
 import sys
  
 def get_menu_option():
-    print("Hello, welcome to game Tic Tac Toe. Have fun! ")
-    option = input("Player vs Player(1)\nPlayer vs AI (2)\nIf you wanna exit press (3) any time: ")
+    print (30 * "-" , "MENU" , 30 * "-")
+    print(" ")
+    print("---------- Hello, welcome to game Tic Tac Toe. Have fun! ---------")
+    print(" ")
+    option = input("* Player vs Player ........[1]\n* Player vs AI ............[2]\n* If you wanna exit .......[3]\n* Enter your choice .....[1-3] ")
+    print("")
+    print(67 * "-")
+    while True:
+        if option == "1":
+            print("You've chosen Player vs Player")
+        elif option == "2":
+            print("You've chosen Player vs AI")
+        elif option == "3":
+            print("Bye Bye")
+            sys.exit()
+        else:
+            print(" ")
+            print("Please choose correct number!")
+            option = input("* Player vs Player ........[1]\n* Player vs AI ............[2]\n* If you wanna exit .......[3]\n* Enter your choice .....[1-3] ")
+            print("")
+            continue
+        return option
  
-    if option == "1":
-        print("You've chosen Player vs Player")
-    elif option == "3":
-        print("Bye Bye")
-        sys.exit()
-    else:
-        print("You've chosen Player vs AI")
-    return option
- 
- 
- 
+def player_input():
+    player1 = input("Please choose 'X' or 'O' ")
+
+    if player1 == "3":
+            print("Bye Bye")
+            sys.exit()
+
+    while True:
+        if player1.upper() == 'X':
+            player2='O'
+            print("Your choice is:  " + player1.upper() + ". Player 2 is " + player2.upper())
+        elif player1.upper() == 'O':
+            player2='X'
+            print("Your choice is: " + player1.upper() + ". Player 2 is " + player2.upper())
+        else:
+            player1 = input("Please choice 'X' or 'O' ")
+            continue
+        return player1.upper(),player2.upper() 
  
  
 def get_empty_board():
@@ -78,13 +105,10 @@ def check_coordinates(already_chosen, round, is_ai):
             continue
         return coordinate
  
-def get_human_coordinates(already_chosen, coordinates, round, is_ai):
+def get_human_coordinates(already_chosen, round, is_ai):
     is_ai = False
-    coordinate = check_coordinates(already_chosen, round, is_ai)     
-    for row in coordinates:
-        for element in row:
-            if element == coordinate:
-                return element
+    coordinate = check_coordinates(already_chosen, round, is_ai)
+    return coordinate
  
 def create_new_board(board, move, current_player, coordinates):
     for row in range(len(coordinates)):
@@ -95,35 +119,17 @@ def create_new_board(board, move, current_player, coordinates):
             else:
                 if move == coordinates[row][index]:
                     board[row][index] = "O"
-    return board
- 
-def player_input():
-    player1 = input("Please choose 'X' or 'O' ")
-
-    if player1 == "3":
-            print("Bye Bye")
-            sys.exit()
-
-    while True:
-        if player1.upper() == 'X':
-            player2='O'
-            print("Your choice is:  " + player1.upper() + ". Player 2 is " + player2.upper())
-        elif player1.upper() == 'O':
-            player2='X'
-            print("Your choice is: " + player1.upper() + ". Player 2 is " + player2.upper())
-        else:
-            player1 = input("Please choice 'X' or 'O' ")
-            continue
-        return player1.upper(),player2.upper()
+    return board 
  
  
 def get_winning_player(board, current_player, players, coordinates, already_chosen, round, is_ai, game_mode):
     winner = None
     if round % 2 == 0 or game_mode == "1":
-        move = get_human_coordinates(already_chosen, coordinates, round, is_ai)
+        move = get_human_coordinates(already_chosen, round, is_ai)
     else:
         move = get_random_ai_coordinates(board, players, coordinates, current_player, round, already_chosen)
     new_board = create_new_board(board, move, current_player, coordinates)
+    
     hori = new_board[0][0]==new_board[0][1]==new_board[0][2]!= '.' or new_board[1][0]==new_board[1][1]==new_board[1][2]!='.' or new_board[2][0]==new_board[2][1]==new_board[2][2]!= '.'
     verti = new_board[0][0]==new_board[1][0]==new_board[2][0]!= '.' or new_board[0][1]==new_board[1][1]==new_board[2][1]!= '.' or new_board[0][2]==new_board[1][2]==new_board[2][2]!= '.'
     dia = new_board[0][0]==new_board[1][1]==new_board[2][2]!= '.' or new_board[2][0]==new_board[1][1]==new_board[0][2]!= '.' 
@@ -135,8 +141,14 @@ def get_winning_player(board, current_player, players, coordinates, already_chos
 
 def is_winner(board, current_player):
     
-    return ((board[0][0]==board[0][1]==board[0][2]!= current_player) or (board[1][0]==board[1][1]==board[1][2]!=current_player) or (board[2][0]==board[2][1]==board[2][2]!= current_player) or
-    (board[0][0]==board[1][0]==board[2][0]!= current_player) or (board[0][1]==board[1][1]==board[2][1]!= current_player) or (board[0][2]==board[1][2]==board[2][2]!= current_player) or (board[0][0]==board[1][1]==board[2][2]!= current_player) or (board[2][0]==board[1][1]==board[0][2]!= current_player)) 
+    return ((board[0][0] == current_player and board[0][1] == current_player and board[0][2] == current_player) or # across the top
+    (board[1][0] == current_player and board[1][1] == current_player and board[1][2] == current_player) or # across the middle
+    (board[2][0] == current_player and board[2][1] == current_player and board[2][2] == current_player) or # across the bottom
+    (board[0][0] == current_player and board[1][0] == current_player and board[2][0] == current_player) or # down the left side
+    (board[0][1] == current_player and board[1][1] == current_player and board[2][1] == current_player) or # down the middle
+    (board[0][2] == current_player and board[1][2] == current_player and board[2][2] == current_player) or # down the right side
+    (board[0][0] == current_player and board[1][1] == current_player and board[2][2] == current_player) or # diagonal
+    (board[0][2] == current_player and board[1][1] == current_player and board[2][0] == current_player)) # diagonal
 
 def display_board(board):
     row_list = ("A", "B", "C")
@@ -148,7 +160,6 @@ def display_board(board):
         index += 1
         print('  ---+'+('---'*(len(board)-2))+'+---')
  
-  
 def is_board_full(board, winning_player, current_player):
     full = False
  
@@ -159,15 +170,42 @@ def is_board_full(board, winning_player, current_player):
         else:
             full = True
     if full and winning_player != current_player:
+        cls()
         display_board(board)
         print("It's a tie!")
     return full
- 
+
+def copy_current_board(board):
+    copied_board = []
+    
+    for i in board:
+        row = []
+        for value in i:
+            row.append(value)
+        copied_board.append(row)
+        
+    return copied_board
+
+def choose_random_move(board, coordinates):
+    possible_moves = []
+    for row in range(3):
+        for index in range(3):
+            if board[row][index] == ".":
+                possible_moves.append(coordinates[row][index])
+    if len(possible_moves) != 0:
+        return random.choice(possible_moves)
+    else:
+        return None
+
+def predicted_move(copied_board, coordinates, current_player, already_chosen):
+    for row in range(3):
+        for index in range(3):
+            if coordinates[row][index] not in already_chosen:
+                copied_board[row][index] = current_player
+    
 def get_random_ai_coordinates(board, players, coordinates, current_player, round, already_chosen):
- 
     is_ai = True
     
-
     if current_player == players[0]:
         if round % 2 == 0:
             coordinate = check_coordinates(already_chosen, round, is_ai)
@@ -176,50 +214,36 @@ def get_random_ai_coordinates(board, players, coordinates, current_player, round
         else:
             current_player = players[1]
     else:
-        if round % 2 == 0:
-            coordinate = check_coordinates(already_chosen, round, is_ai)
-            current_player = players[0]
-            return coordinate
-        else:
-            current_player = players[1]
-        index =  random.choice(range(3))
-        row = random.choice(range(3))
-        element = random.choice(coordinates) 
-        if board[row][index] == "." and element[index] != coordinates[1][1]:
-            return coordinates[1][1]
-        '''possibleMoves = [coordinates[0][1], coordinates[1][0], coordinates[1][2], coordinates[2][1]]
-        if element[index] not in already_chosen and board[row][index] == ".":
-            return random.choice(possibleMoves)'''
-        possibleMoves = [coordinates[0][0], coordinates[0][2], coordinates[2][0], coordinates[2][2]]
+        # Check if player 1 can win in the next move    
         for row in range(3):
-            element = random.choice(coordinates) 
-            #element = coordinates[row]
             for index in range(3):
-                #if board[row][index] != element[index] and board[row][index] == "." and element[index] not in already_chosen:
-                   # already_chosen.append(element[index])
-                    #return element[index]
-                if board[row][index] == "." and is_winner(board, current_player):
-                    already_chosen.append(element[index])
-                    return element[index]
-                if current_player == players[0]:
-                    if is_winner(board, current_player):
-                        already_chosen.append(element[index])
-                        return element[index]
-                elif element[index] not in possibleMoves and board[row][index] == ".":
-                    possibleMoves.append(element[index])
-            if len(possibleMoves) != 0 and element[index] not in already_chosen:
-                return random.choice(possibleMoves)
-            
+                copied_board = copy_current_board(board)
+                if copied_board[row][index] == ".":
+                    predicted_move(copied_board, coordinates, players[0], already_chosen)
+                    if is_winner(copied_board, players[0]):
+                        already_chosen.append(coordinates[row][index])
+                        return coordinates[row][index]
+                    
+        # Check if AI can win in the next move    
+        for row in range(3):
+            for index in range(3):
+                copied_board = copy_current_board(board)
+                if copied_board[row][index] == ".":
+                    predicted_move(copied_board, coordinates, current_player, already_chosen)
+                    if is_winner(copied_board, current_player):
+                        already_chosen.append(coordinates[row][index])
+                        return coordinates[row][index]
+                    
+        move = choose_random_move(board, coordinates)
+        if move != None:
+            return move
+        
+        if coordinates[1][1] not in already_chosen:
+            already_chosen.append(coordinates[1][1])
+            return coordinates[1][1]
+        
+        return choose_random_move(board, coordinates)
 
-                '''else:
-                    while True:
-                        index = random.choice(range(3))
-                        if element[index] not in already_chosen:
-                            already_chosen.append(element[index])
-                            return element[index]
-                        else:
-                            element = random.choice(coordinates) 
-                            continue'''
 
 def cls():
     os.system('cls' if os.name=='nt' else 'clear') 
