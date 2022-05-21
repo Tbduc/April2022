@@ -197,11 +197,9 @@ def choose_random_move(board, coordinates):
     else:
         return None
 
-def predicted_move(copied_board, coordinates, current_player, already_chosen):
-    for row in range(3):
-        for index in range(3):
-            if coordinates[row][index] not in already_chosen:
-                copied_board[row][index] = current_player
+def predicted_move(copied_board, coordinates, current_player, already_chosen, row, index):
+    if coordinates[row][index] not in already_chosen:
+        copied_board[row][index] = current_player
     
 def get_random_ai_coordinates(board, players, coordinates, current_player, round, already_chosen):
     is_ai = True
@@ -214,23 +212,23 @@ def get_random_ai_coordinates(board, players, coordinates, current_player, round
         else:
             current_player = players[1]
     else:
-        # Check if player 1 can win in the next move    
-        for row in range(3):
-            for index in range(3):
-                copied_board = copy_current_board(board)
-                if copied_board[row][index] == ".":
-                    predicted_move(copied_board, coordinates, players[0], already_chosen)
-                    if is_winner(copied_board, players[0]):
-                        already_chosen.append(coordinates[row][index])
-                        return coordinates[row][index]
-                    
         # Check if AI can win in the next move    
         for row in range(3):
             for index in range(3):
                 copied_board = copy_current_board(board)
                 if copied_board[row][index] == ".":
-                    predicted_move(copied_board, coordinates, current_player, already_chosen)
+                    predicted_move(copied_board, coordinates, current_player, already_chosen, row, index)
                     if is_winner(copied_board, current_player):
+                        already_chosen.append(coordinates[row][index])
+                        return coordinates[row][index]
+                    
+        # Check if player 1 can win in the next move    
+        for row in range(3):
+            for index in range(3):
+                copied_board = copy_current_board(board)
+                if copied_board[row][index] == ".":
+                    predicted_move(copied_board, coordinates, players[0], already_chosen, row, index)
+                    if is_winner(copied_board, players[0]):
                         already_chosen.append(coordinates[row][index])
                         return coordinates[row][index]
                     
