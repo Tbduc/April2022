@@ -279,5 +279,6 @@ def main():
         elif its_a_tie:
             is_game_running = False
         round += 1
+        
 if __name__ == '__main__':
     main()
