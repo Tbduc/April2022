@@ -24,3 +24,6 @@ for i in range(1,len(l)):
         l[j+1] = l[j]
         j -= 1
     l[j+1] = key
+
+for i,d in enumerate(l):
+    print(f"index -> {i}, data -> {d}")
