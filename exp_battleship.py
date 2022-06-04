@@ -421,7 +421,38 @@ def get_ship(board, coordinates, player, already_chosen, already_chosen2, small_
         index += 1
     return board
 
+#next phase - shooting phase
 
+def display_boards(board_guess, board_guess2, letter_list, map_size):
+    map_size = int(map_size) + 1
+    index = 0
+ 
+    for element, element2 in zip(board_guess, board_guess2):
+        if index < 1:
+            print("   ", end="")
+            for item in range(1, map_size):
+                if item == 1:
+                    print("Player 1", end="")
+                    print("\n")
+                print(item, end="   ")
+            print("      ", end="")
+            for item2 in range(1, map_size):
+                if item == 2:
+                    print("Player 2", end="")
+                    print("\n")
+                print(item2, end="   ")
+            print("\n")
+        print(letter_list[index], end="  ")
+        for i in range(len(board_guess)):
+            print(element[i], end="   ")
+        print("   ", end="")
+        print(letter_list[index], end="  ")
+        for j in range(len(board_guess2)):
+            print(element2[j], end="   ")
+        print("\n")
+        index += 1
+    pass
+    
 
 def player_turn(round, player):
     if round % 2 == 0:
@@ -468,3 +499,7 @@ get_ship(board, coordinates, player, already_chosen, already_chosen2, small_ship
 round += 1
 player = 2
 get_ship(board2, coordinates, player, already_chosen, already_chosen2, small_ship, medium_ship)
+print("Game starts!")
+get_type_board(board_guess)
+get_type_board2(board_guess2)
+display_boards(board_guess, board_guess2, letter_list, map_size)
