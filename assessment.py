@@ -12,7 +12,7 @@ In order to pass the exam you should have at least 60% of tests passed.
 '''
 
 
-def get_draws(filename='lotto_results.csv'):
+def get_draws(filename='lotto-result.csv'):
     """
     In CSV file you can find information about winnings on lottery from previous year.
     It contains: 6 lucky numbers separated with "-", name of month, day of draw, name of winner,
@@ -170,6 +170,23 @@ def get_most_winning_number(draws):
    
 #get_most_winning_number(get_draws())
 
+def get_list_of_numbers(draws):
+    res = [item[0] for item in draws]
+    new_list = []
+    for i in res:
+      numbers = get_draw_numbers(i)
+      new_list.append(numbers)
+    return new_list
+
+def flat(draws):
+    flatList = []
+    for element in draws:
+        if type(element) is list:
+            for item in element:
+                flatList.append(item)
+        else:
+            flatList.append(element)
+    return flatList
 
 def get_all_numbers(draws):
     """
@@ -177,8 +194,10 @@ def get_all_numbers(draws):
     :param draws: list of lists with all draws
     :return: sorted list of all drawn numbers
     """
-    print(draws)
-get_all_numbers(get_draws())
+    flat_list = sorted(flat(draws))
+    print(flat_list)
+    
+get_all_numbers(get_list_of_numbers(get_draws()))
 
 def get_highest_prize(draws):
     """
@@ -188,7 +207,7 @@ def get_highest_prize(draws):
     :rtype: float
     """
     pass
-
+get_highest_prize(get_draws())
 
 def get_average_prize(draws):
     """
