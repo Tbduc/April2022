@@ -1,3 +1,9 @@
+from calendar import month_abbr
+import imp
+
+
+import random
+
 ALL_MONTHS = ["january", "february", "march", "april", "may", "june",
               "july", "august", "september", "october", "november", "december"]
 
@@ -199,6 +205,8 @@ def get_all_numbers(draws):
     
 get_all_numbers(get_list_of_numbers(get_draws()))
 
+#nieprzeczytane
+
 def get_highest_prize(draws):
     """
     Implement a function that finds the highest prize won in last year
@@ -206,7 +214,12 @@ def get_highest_prize(draws):
     :return: highest prize
     :rtype: float
     """
-    pass
+    new_list = []
+    for col in draws:
+        prizes = float(col[4])
+        new_list.append(prizes)
+    sorted_list = sorted(new_list)
+    return sorted_list[-1]
 get_highest_prize(get_draws())
 
 def get_average_prize(draws):
@@ -216,17 +229,16 @@ def get_average_prize(draws):
     :return: average winning
     :rtype: float
     """
-    pass
-
-
-def get_sorted_list_of_unique_winners_names(draws):
-    """
-    Implement a function that will return a list of winners names, sorted in alphabetical order,
-    do not use build-in methods, implement your own sorting algorithm
-    :param draws: list of lists with all draws
-    :return: list of strings alphabetically sorted
-    """
-    pass
+    new_list = []
+    sum_prizes = 0
+    for col in draws:
+        prizes = float(col[4])
+        sum_prizes += prizes
+        new_list.append(prizes)
+    print(round(sum_prizes/len(new_list), 2))
+    return round(sum_prizes/len(new_list), 2)
+    
+get_average_prize(get_draws())
 
 
 def bubble_sort(arr):
@@ -235,20 +247,47 @@ def bubble_sort(arr):
     :param arr: list of strings with names
     :return: sorted list
     """
-    pass
+    n = len(arr)
+    for i in range(n):
+        for j in range(n - i - 1):
+            if arr[j] > arr[j + 1]:
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+    return arr
 
+def get_sorted_list_of_unique_winners_names(draws):
+    """
+    Implement a function that will return a list of winners names, sorted in alphabetical order,
+    do not use build-in methods, implement your own sorting algorithm
+    :param draws: list of lists with all draws
+    :return: list of strings alphabetically sorted
+    """
+    new_list = []
+    for col in draws:
+      winners = col[3]
+      new_list.append(winners)
+    print(bubble_sort(new_list))
+get_sorted_list_of_unique_winners_names(get_draws())
 
 def check_if_number_ever_been_drawn(draws, number):
-    """
-    Implement a function that will return True of False, depending on whether the given number ever been drawn.
-    If the given number is out of range 1-49 inclusive, then method should raise ValueError.
-    :param draws: list of lists with all draws
-    :param number: checked number
-    :raises ValueError: if the given number is out of range 1-49.
-            Error message: "This number does not take part in the draw"
-    :return: True or False
-    """
-    pass
+  """
+  Implement a function that will return True of False, depending on whether the given number ever been drawn.
+  If the given number is out of range 1-49 inclusive, then method should raise ValueError.
+  :param draws: list of lists with all draws
+  :param number: checked number
+  :raises ValueError: if the given number is out of range 1-49.
+          Error message: "This number does not take part in the draw"
+  :return: True or False
+  """
+  if number not in range(1, 50):
+    raise ValueError("This number does not take part in the draw")
+  for i in draws:
+    for j in i:
+      if number == j:
+        return True
+  
+  return False
+
+#print(check_if_number_ever_been_drawn(get_list_of_numbers(get_draws()), 49))
 
 
 def generate_random_numbers():
@@ -258,8 +297,12 @@ def generate_random_numbers():
 
     :return: list with 6 positive integers between 1 - 49 inclusive
     """
-    pass
-
+    num_list = []
+    for i in range(6):
+      random_num = random.randint(1, 49)
+      num_list.append(random_num)
+    return num_list
+#generate_random_numbers()
 
 def get_list_of_draws_in_month(draws, month):
     """
@@ -271,7 +314,14 @@ def get_list_of_draws_in_month(draws, month):
             Error message: "Such month does not exists"
     :return: list of lists with draws for particular month
     """
-    pass
+    result = []
+    if month.lower() not in ALL_MONTHS:
+      raise ValueError("Such month does not exists")
+    for i in draws:
+      if i[1].lower() == month.lower():
+        result.append(get_draw_numbers(i[0]))
+    return result
+get_list_of_draws_in_month(get_draws(), "October")
 
 
 def get_month_with_most_number_of_winnings(draws):
@@ -280,7 +330,18 @@ def get_month_with_most_number_of_winnings(draws):
     :param draws: list of lists with all draws
     :return: lowercase name of month
     """
-    pass
+    months = []
+    months_dict = {}
+    for i in draws:
+      months.append(i[1])
+    for month in months:
+      if month in months_dict:
+        months_dict[month] += 1
+      else:
+        months_dict[month] = 1
+    max_month = max(months_dict, key=months_dict.get)
+    return max_month.lower()
+#get_month_with_most_number_of_winnings(get_draws())  
 
 
 def get_dict_with_cities_and_number_of_wins_in_them(draws):
@@ -290,8 +351,18 @@ def get_dict_with_cities_and_number_of_wins_in_them(draws):
     :param draws: list of lists with all draws
     :return: dict
     """
-    pass
+    cities = []
+    cities_dict = {}
+    for i in draws:
+      cities.append(i[5])
+    for city in cities:
+      if city in cities_dict:
+        cities_dict[city] += 1
+      else:
+        cities_dict[city] = 1
+    return cities_dict
 
+get_dict_with_cities_and_number_of_wins_in_them(get_draws())
 
 def get_list_with_top_5_winnings_in_last_year_descending(draws):
     """
@@ -299,4 +370,10 @@ def get_list_with_top_5_winnings_in_last_year_descending(draws):
     :param draws: list of lists with all draws
     :return: list with top 5 winnings
     """
-    pass
+    wins = []
+    for i in draws:
+      wins.append(float(i[4]))
+    result = sorted(wins, key = lambda x:float(x))[::-1]
+    return result[::6]
+    
+get_list_with_top_5_winnings_in_last_year_descending(get_draws())
